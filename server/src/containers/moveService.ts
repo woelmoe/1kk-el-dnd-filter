@@ -6,10 +6,12 @@ export const moveService = {
     position?: number
     reason?: string
   } {
-    if (leftContainer.has(id))
+    if (leftContainer.has(id)) {
       return { added: false, reason: 'already in left' }
-    if (rightContainer.has(id))
+    }
+    if (rightContainer.has(id)) {
       return { added: false, reason: 'already in right' }
+    }
 
     leftContainer.push(id)
     return { added: true, position: leftContainer.count() }
@@ -24,7 +26,24 @@ export const moveService = {
     return true
   },
 
-  setRightOrder(next: number[]): number[] {
-    return rightContainer.setOrder(next)
+  setRightOrder(visibleOrder: number[]) {
+    const patches = new Map<number, number>()
+
+    for (const id of visibleOrder) {
+      const pos = rightContainer.findPosition(id)
+      if (pos !== undefined) {
+        patches.set(pos, id)
+      }
+    }
+
+    if (patches.size !== visibleOrder.length) {
+      console.log('setRightOrder: length mismatch!', {
+        expected: patches.size,
+        got: visibleOrder.length
+      })
+      return
+    }
+
+    rightContainer.applyPatches(patches)
   }
 }

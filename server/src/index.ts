@@ -3,6 +3,7 @@ import cors from 'cors'
 import compression from 'compression'
 import { controllersDebug } from './controllers/debug'
 import { controllersEvents } from './controllers/events'
+import { controllersItems } from './controllers/items'
 
 const app = express()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 
 controllersDebug(app)
 controllersEvents(app)
+controllersItems(app)
 
 const PORT = Number(process.env.PORT) || 4000
 

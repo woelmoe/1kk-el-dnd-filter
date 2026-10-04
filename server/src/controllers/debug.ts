@@ -8,6 +8,7 @@ import {
   isValidationError,
   broadcastTest
 } from '../services/debug'
+import { moveService } from '@src/containers/moveService'
 
 export function controllersDebug(app: Express) {
   app.get('/health', (_req, res) => {
@@ -42,5 +43,14 @@ export function controllersDebug(app: Express) {
   app.post('/api/debug/broadcast-test', (_req, res) => {
     broadcastTest()
     res.json({ broadcasted: true })
+  })
+
+  app.post('/api/debug/set-order', (req, res) => {
+    const { order } = req.body
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ error: 'order must be array' })
+    }
+    moveService.setRightOrder(order)
+    res.json({ ok: true })
   })
 }
