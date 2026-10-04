@@ -5,7 +5,8 @@ import {
   moveToLeft,
   getDebugState,
   parseId,
-  isValidationError
+  isValidationError,
+  broadcastTest
 } from '../services/debug'
 
 export function controllersDebug(app: Express) {
@@ -36,5 +37,10 @@ export function controllersDebug(app: Express) {
     if (isValidationError(id)) return res.status(400).json(id)
 
     res.json(moveToLeft(id))
+  })
+
+  app.post('/api/debug/broadcast-test', (_req, res) => {
+    broadcastTest()
+    res.json({ broadcasted: true })
   })
 }

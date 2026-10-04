@@ -1,4 +1,4 @@
-import { leftContainer, rightContainer } from './containers.js'
+import { leftContainer, rightContainer } from './containers'
 
 export const moveService = {
   addToLeft(id: number): {

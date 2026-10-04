@@ -1,14 +1,15 @@
 import { isValidId } from '@src/utils/validation'
 import { getContainerState, type IContainerState } from './state'
 import { moveService } from '@src/containers/moveService'
+import { broadcast } from '@src/events'
 
-export interface AddResult extends IContainerState {
+export interface IAddResult extends IContainerState {
   added: boolean
   reason?: string
   position?: number
 }
 
-export interface MoveResult extends IContainerState {
+export interface IMoveResult extends IContainerState {
   moved: boolean
 }
 
@@ -38,7 +39,7 @@ function tryAddToLeft(id: number) {
   return result
 }
 
-export function addToLeft(id: number): AddResult {
+export function addToLeft(id: number): IAddResult {
   const result = tryAddToLeft(id)
   return {
     ...result,
@@ -46,7 +47,7 @@ export function addToLeft(id: number): AddResult {
   }
 }
 
-export function moveToRight(id: number): MoveResult {
+export function moveToRight(id: number): IMoveResult {
   const moved = moveService.addToRight(id)
   return {
     moved,
@@ -54,7 +55,7 @@ export function moveToRight(id: number): MoveResult {
   }
 }
 
-export function moveToLeft(id: number): MoveResult {
+export function moveToLeft(id: number): IMoveResult {
   const result = tryAddToLeft(id)
   return {
     moved: result.added,
@@ -64,4 +65,8 @@ export function moveToLeft(id: number): MoveResult {
 
 export function getDebugState(): IContainerState {
   return getContainerState()
+}
+
+export function broadcastTest() {
+  broadcast('test:event', { test: 'events test', ts: Date.now() })
 }
