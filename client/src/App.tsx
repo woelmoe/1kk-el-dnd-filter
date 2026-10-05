@@ -1,6 +1,7 @@
 import { Container } from '@mui/material'
-import { LeftPanel } from './components/LeftPanel'
+import { RightContainer } from './components/RightContainer/RightContainer'
 import { OnBoarding } from './components/OnBoarding/OnBoarding'
+import { LeftContainer } from './components/LeftContainer/LeftContainer'
 
 export default function App() {
   return (
@@ -16,10 +17,8 @@ export default function App() {
         boxSizing: 'border-box'
       }}
     >
-      <LeftPanel />
-      <div style={{ border: '1px dashed gray', padding: 16 }}>
-        Правая панель (заглушка)
-      </div>
+      <LeftContainer />
+      <RightContainer />
       <OnBoarding />
     </Container>
   )

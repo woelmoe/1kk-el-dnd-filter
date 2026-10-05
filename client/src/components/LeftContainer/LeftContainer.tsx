@@ -1,13 +1,13 @@
 import { Paper, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { LeftList } from './LeftList'
-import { useFilters } from '../store/filter'
-import { useDebouncedValue } from '../composable/useDebouncedValue'
-import { useVirtualList } from '../composable/useVirtualList'
-import { addToRight, getLeft } from '../api'
-import { AddFab } from './AddFab'
+import { useFilters } from '../../store/filter'
+import { useDebouncedValue } from '../../composable/useDebouncedValue'
+import { useVirtualList } from '../../composable/useVirtualList'
+import { addToRight, getLeft } from '../../api'
+import { AddFab } from '../AddFab'
 
-export function LeftPanel() {
+export function LeftContainer() {
   const { leftFilter, setLeftFilter } = useFilters()
   const debouncedFilter = useDebouncedValue(leftFilter, 300)
   const queryClient = useQueryClient()
