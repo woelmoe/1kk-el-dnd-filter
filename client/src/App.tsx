@@ -1,4 +1,6 @@
-import { Box, Container } from '@mui/material'
+import { Container } from '@mui/material'
+import { LeftPanel } from './components/LeftPanel'
+import { Onboarding } from './components/OnBoardings'
 
 export default function App() {
   return (
@@ -14,12 +16,11 @@ export default function App() {
         boxSizing: 'border-box'
       }}
     >
-      <Box sx={{ border: '1px dashed gray', p: 2 }}>
-        Левая панель (заглушка)
-      </Box>
-      <Box sx={{ border: '1px dashed gray', p: 2 }}>
+      <LeftPanel />
+      <div style={{ border: '1px dashed gray', padding: 16 }}>
         Правая панель (заглушка)
-      </Box>
+      </div>
+      <Onboarding />
     </Container>
   )
 }
