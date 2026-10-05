@@ -11,7 +11,14 @@ import { controllersLeft } from './controllers/left'
 const app = express()
 
 app.use(cors())
-app.use(compression())
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.headers.accept === 'text/event-stream') return false
+      return compression.filter(req, res)
+    }
+  })
+)
 app.use(express.json())
 
 controllersDebug(app)

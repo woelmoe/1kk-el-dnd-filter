@@ -14,6 +14,8 @@ import {
 import { QueryKeys } from '../../api/types'
 import { ContainerType, type IDragData, type IDropData } from '../types'
 
+export const lastLocalMutation = { current: 0 }
+
 interface IOptions {
   rightItems: number[]
   rightQueryKey: [string, string]
@@ -73,6 +75,7 @@ function moveLeftToRight(
   removeFromCache(queryClient, QueryKeys.Left, id)
   insertToCache(queryClient, QueryKeys.Right, id, beforeId, false)
 
+  lastLocalMutation.current = Date.now()
   addToRight(id, beforeId).catch(() => {
     queryClient.invalidateQueries({ queryKey: [QueryKeys.Left] })
     queryClient.invalidateQueries({ queryKey: [QueryKeys.Right] })
@@ -83,6 +86,7 @@ function moveRightToLeft(queryClient: QueryClient, id: number) {
   removeFromCache(queryClient, QueryKeys.Right, id)
   insertToCache(queryClient, QueryKeys.Left, id, undefined, true)
 
+  lastLocalMutation.current = Date.now()
   removeFromRight(id).catch(() => {
     queryClient.invalidateQueries({ queryKey: [QueryKeys.Left] })
     queryClient.invalidateQueries({ queryKey: [QueryKeys.Right] })
@@ -99,8 +103,17 @@ function reorderRight(
   if (activeId === overId) return
 
   const oldIndex = rightItems.indexOf(activeId)
-  const newIndex = rightItems.indexOf(overId)
-  if (oldIndex === -1 || newIndex === -1) return
+  if (oldIndex === -1) return
+
+  let newIndex: number
+
+  if (Number.isFinite(overId)) {
+    const idx = rightItems.indexOf(overId)
+    if (idx === -1) return
+    newIndex = idx
+  } else {
+    newIndex = rightItems.length - 1
+  }
 
   const newOrder = [...rightItems]
   newOrder.splice(oldIndex, 1)
@@ -117,6 +130,7 @@ function reorderRight(
     }
   })
 
+  lastLocalMutation.current = Date.now()
   updateRightOrder(newOrder).catch(() => {
     queryClient.invalidateQueries({ queryKey: [QueryKeys.Right] })
   })
