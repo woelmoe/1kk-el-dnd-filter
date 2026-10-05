@@ -57,6 +57,7 @@ export function LeftContainer() {
 
       <LeftList
         parentRef={list.parentRef}
+        sensorRef={list.sensorRef}
         virtualizer={list.virtualizer}
         items={list.items}
         isFetchingNextPage={list.isFetchingNextPage}

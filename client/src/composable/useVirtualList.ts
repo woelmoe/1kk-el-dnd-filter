@@ -29,8 +29,10 @@ export function useVirtualList({
   )
 
   const parentRef = useRef<HTMLDivElement>(null)
+  const sensorRef = useRef<HTMLDivElement>(null)
   const [rowHeight, setRowHeight] = useState(50)
 
+  // вычисляем высоту элемента в списке, чтобы подогнать под visibleRows элементов
   useEffect(() => {
     const el = parentRef.current
     if (!el) return
@@ -61,24 +63,53 @@ export function useVirtualList({
   }, [rowHeight, virtualizer])
 
   useEffect(() => {
+    const sensor = sensorRef.current
+    const root = parentRef.current
+    if (!sensor || !root) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return
+        if (query.hasNextPage && !query.isFetchingNextPage) {
+          query.fetchNextPage()
+        }
+      },
+      {
+        root,
+        rootMargin: `${rowHeight * 5}px 0px`,
+        threshold: 0
+      }
+    )
+
+    observer.observe(sensor)
+    return () => observer.disconnect()
+  }, [query.hasNextPage, query.isFetchingNextPage, rowHeight, query])
+
+  // автоподгрузка, если скролл не появился
+  useEffect(() => {
     const el = parentRef.current
     if (!el) return
 
-    const onScroll = () => {
-      const nearBottom =
-        el.scrollTop + el.clientHeight >= el.scrollHeight - rowHeight * 5
-
-      if (nearBottom && query.hasNextPage && !query.isFetchingNextPage) {
+    const check = () => {
+      const noScroll = el.scrollHeight <= el.clientHeight
+      if (noScroll && query.hasNextPage && !query.isFetchingNextPage) {
         query.fetchNextPage()
       }
     }
 
-    el.addEventListener('scroll', onScroll)
-    return () => el.removeEventListener('scroll', onScroll)
-  }, [query, rowHeight])
+    check()
+    const raf = requestAnimationFrame(check)
+    const timer = setTimeout(check, 200)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(timer)
+    }
+  }, [items.length, query.hasNextPage, query.isFetchingNextPage, rowHeight])
 
   return {
     parentRef,
+    sensorRef,
     virtualizer,
     items,
     rowHeight,

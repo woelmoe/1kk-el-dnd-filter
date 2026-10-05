@@ -7,6 +7,7 @@ import { SortableRow } from './SortableRow'
 
 interface IProps {
   parentRef: React.RefObject<HTMLDivElement | null>
+  sensorRef: React.RefObject<HTMLDivElement | null>
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
@@ -15,6 +16,7 @@ interface IProps {
 
 export function RightList({
   parentRef,
+  sensorRef,
   virtualizer,
   items,
   isFetchingNextPage,
@@ -25,22 +27,27 @@ export function RightList({
     data: { container: ContainerType.Right } satisfies IDropData
   })
 
+  const setRefs = (node: HTMLDivElement | null) => {
+    parentRef.current = node
+    setDroppableRef(node)
+  }
+
   return (
     <Box
-      ref={parentRef}
+      ref={setRefs}
       sx={{
         flex: 1,
-        overflowY: 'auto',
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        overscrollBehavior: 'contain',
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 1,
-        overflowX: 'hidden',
         minHeight: 0
       }}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <div
-          ref={setDroppableRef}
           style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
         >
           {virtualizer.getVirtualItems().map((vi) => {
@@ -63,6 +70,9 @@ export function RightList({
           })}
         </div>
       </SortableContext>
+
+      {/* триггер для IntersectionObserver  */}
+      <div ref={sensorRef} style={{ height: 1 }} />
 
       {isFetchingNextPage && (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>

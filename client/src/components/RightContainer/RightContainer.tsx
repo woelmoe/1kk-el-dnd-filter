@@ -51,6 +51,7 @@ export function RightContainer() {
 
       <RightList
         parentRef={list.parentRef}
+        sensorRef={list.sensorRef}
         virtualizer={list.virtualizer}
         items={list.items}
         isFetchingNextPage={list.isFetchingNextPage}

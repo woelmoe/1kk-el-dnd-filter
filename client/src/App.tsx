@@ -1,5 +1,5 @@
 import { Container } from '@mui/material'
-import { DndContext, DragOverlay } from '@dnd-kit/core'
+import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { LeftContainer } from './components/LeftContainer/LeftContainer'
 import { RightContainer } from './components/RightContainer/RightContainer'
 import { OnBoarding } from './components/OnBoarding/OnBoarding'
@@ -18,6 +18,7 @@ export default function App() {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={pointerWithin}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onDragCancel={onDragCancel}
@@ -49,7 +50,9 @@ export default function App() {
               border: '1px solid #ccc',
               borderRadius: 4,
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              cursor: 'grabbing'
+              cursor: 'grabbing',
+              fontSize: 14,
+              minWidth: 100
             }}
           >
             {activeId}

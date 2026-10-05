@@ -14,14 +14,13 @@ function parseId(raw: string): number | null {
 export function controllersRight(app: Express) {
   app.post('/api/right', (req, res) => {
     const id = Number(req.body?.id)
-    if (!isValidId(id)) {
-      return res.status(400).json({ error: 'invalid id' })
-    }
+    if (!isValidId(id)) return res.status(400).json({ error: 'invalid id' })
 
-    const queued = queueAddToRight(id)
-    if (!queued) {
-      return res.status(409).json({ error: 'cannot queue', id })
-    }
+    const beforeId =
+      req.body?.beforeId !== undefined ? Number(req.body.beforeId) : undefined
+
+    const queued = queueAddToRight(id, beforeId)
+    if (!queued) return res.status(409).json({ error: 'cannot queue', id })
 
     res.status(202).json({ queued: true, id })
   })

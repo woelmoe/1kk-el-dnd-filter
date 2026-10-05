@@ -6,6 +6,7 @@ import { DraggableRow } from './DraggableRow'
 
 interface IProps {
   parentRef: React.RefObject<HTMLDivElement | null>
+  sensorRef: React.RefObject<HTMLDivElement | null>
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
@@ -15,6 +16,7 @@ interface IProps {
 
 export function LeftList({
   parentRef,
+  sensorRef,
   virtualizer,
   items,
   isFetchingNextPage,
@@ -26,24 +28,26 @@ export function LeftList({
     data: { container: ContainerType.Left } satisfies IDropData
   })
 
+  const setRefs = (node: HTMLDivElement | null) => {
+    parentRef.current = node
+    setDroppableRef(node)
+  }
+
   return (
     <Box
-      ref={parentRef}
+      ref={setRefs}
       sx={{
         flex: 1,
-        overflowY: 'auto',
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        overscrollBehavior: 'contain',
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 1,
-        minHeight: 0,
-        overflowX: 'hidden',
-        overscrollBehavior: 'contain'
+        minHeight: 0
       }}
     >
-      <div
-        ref={setDroppableRef}
-        style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
-      >
+      <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
         {virtualizer.getVirtualItems().map((vi) => {
           const id = items[vi.index]
           return (
@@ -67,6 +71,9 @@ export function LeftList({
           )
         })}
       </div>
+
+      {/* триггер для IntersectionObserver  */}
+      <div ref={sensorRef} style={{ height: 1 }} />
 
       {isFetchingNextPage && (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>

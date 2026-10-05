@@ -78,6 +78,14 @@ export class OrderedContainer {
     return valid
   }
 
+  insertAt(id: number, position: number): void {
+    if (this.idSet.has(id)) return
+
+    this.idSet.add(id)
+    this.order.splice(position, 0, id)
+    this.positionById = null
+  }
+
   private rebuildIndex() {
     const index = new Map<number, number>()
     for (let i = 0; i < this.order.length; i++) {

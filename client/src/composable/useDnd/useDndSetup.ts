@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core'
-import { useCrossContainerDnd } from './useDnd'
+import { useDnd } from './useDnd'
 
 interface IOptions {
   rightItems: number[]
@@ -10,7 +10,7 @@ interface IOptions {
 export function useDndSetup({ rightItems, rightQueryKey }: IOptions) {
   const [activeId, setActiveId] = useState<number | null>(null)
 
-  const { sensors, handleDragEnd } = useCrossContainerDnd({
+  const { sensors, handleDragEnd } = useDnd({
     rightItems,
     rightQueryKey
   })

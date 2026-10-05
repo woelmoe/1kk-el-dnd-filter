@@ -30,8 +30,8 @@ export async function addToLeft(id: number) {
   await api.post('/left', { id })
 }
 
-export async function addToRight(id: number) {
-  await api.post('/right', { id })
+export async function addToRight(id: number, beforeId?: number) {
+  await api.post('/right', { id, beforeId })
 }
 
 export async function removeFromRight(id: number) {
