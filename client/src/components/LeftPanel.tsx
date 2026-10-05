@@ -5,6 +5,7 @@ import { useFilters } from '../store/filter'
 import { useDebouncedValue } from '../composable/useDebouncedValue'
 import { useVirtualList } from '../composable/useVirtualList'
 import { addToRight, getLeft } from '../api'
+import { AddFab } from './AddFab'
 
 export function LeftPanel() {
   const { leftFilter, setLeftFilter } = useFilters()
@@ -34,7 +35,8 @@ export function LeftPanel() {
         flexDirection: 'column',
         minHeight: 0,
         border: '1px solid',
-        borderColor: 'divider'
+        borderColor: 'divider',
+        position: 'relative' // ← для FAB
       }}
     >
       <Typography variant='h6' sx={{ mb: 1 }}>
@@ -64,6 +66,8 @@ export function LeftPanel() {
         isFetchingNextPage={list.isFetchingNextPage}
         onSelect={(id) => addMutation.mutate(id)}
       />
+
+      <AddFab />
     </Paper>
   )
 }
