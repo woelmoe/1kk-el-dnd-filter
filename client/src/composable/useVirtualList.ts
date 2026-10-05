@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import type { IPage } from '../api'
+import type { IPage } from '../api/api'
 
 interface IOptions {
   queryKey: QueryKey
@@ -37,8 +37,6 @@ export function useVirtualList({
 
     const updateRowHeight = () => {
       const h = el.clientHeight
-      console.log(h, visibleRows)
-
       if (h > 0) {
         setRowHeight(h / visibleRows)
       }

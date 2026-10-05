@@ -3,10 +3,11 @@ import { Paper, Stack, TextField, Typography } from '@mui/material'
 import { useFilters } from '../../store/filter'
 import { useDebouncedValue } from '../../composable/useDebouncedValue'
 import { useVirtualList } from '../../composable/useVirtualList'
-import { getLeft } from '../../api'
+import { getLeft } from '../../api/api'
 import { LeftList } from './LeftList'
-import { AddIdModal } from '../AddIdModal'
 import { AddFab } from '../AddFab'
+import { AddIdModal } from '../AddIdModal'
+import { QueryKeys } from '../../api/types'
 
 export function LeftContainer() {
   const { leftFilter, setLeftFilter } = useFilters()
@@ -15,7 +16,7 @@ export function LeftContainer() {
   const [addModalOpen, setAddModalOpen] = useState(false)
 
   const list = useVirtualList({
-    queryKey: ['left', debouncedFilter],
+    queryKey: [QueryKeys.Left, debouncedFilter],
     getPage: (cursor) => getLeft(debouncedFilter, cursor)
   })
 

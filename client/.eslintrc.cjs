@@ -10,7 +10,6 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 'latest',
     sourceType: 'module'
-    // sourceType: 'module',
   },
   extends: [
     'eslint:recommended',
@@ -40,12 +39,6 @@ module.exports = {
     'vue/no-setup-props-destructure': 'warn',
     'vue/no-dupe-keys': 'warn',
     'vue/no-v-html': 'off',
-    'vue/multi-word-component-names': [
-      'error',
-      {
-        ignores: ['Header', 'Radiolocator']
-      }
-    ],
     'import/no-restricted-paths': [
       'error',
       {

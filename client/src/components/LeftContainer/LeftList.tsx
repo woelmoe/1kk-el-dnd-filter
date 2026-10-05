@@ -1,18 +1,16 @@
-import {
-  Box,
-  ListItemButton,
-  ListItemText,
-  CircularProgress
-} from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import type { Virtualizer } from '@tanstack/react-virtual'
+import { useDroppable } from '@dnd-kit/core'
+import { ContainerType, type IDropData } from '../../composable/types'
+import { DraggableRow } from './DraggableRow'
 
 interface IProps {
   parentRef: React.RefObject<HTMLDivElement | null>
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
-  rowHeight: number
   onDoubleClick: () => void
+  rowHeight: number
 }
 
 export function LeftList({
@@ -20,9 +18,14 @@ export function LeftList({
   virtualizer,
   items,
   isFetchingNextPage,
-  rowHeight,
-  onDoubleClick
+  onDoubleClick,
+  rowHeight
 }: IProps) {
+  const { setNodeRef: setDroppableRef } = useDroppable({
+    id: 'left-list',
+    data: { container: ContainerType.Left } satisfies IDropData
+  })
+
   return (
     <Box
       ref={parentRef}
@@ -32,10 +35,15 @@ export function LeftList({
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 1,
-        minHeight: 0
+        minHeight: 0,
+        overflowX: 'hidden',
+        overscrollBehavior: 'contain'
       }}
     >
-      <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
+      <div
+        ref={setDroppableRef}
+        style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
+      >
         {virtualizer.getVirtualItems().map((vi) => {
           const id = items[vi.index]
           return (
@@ -45,18 +53,16 @@ export function LeftList({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                height: rowHeight,
                 width: '100%',
+                height: rowHeight,
                 transform: `translateY(${vi.start}px)`
               }}
             >
-              <ListItemButton
-                disableRipple
+              <DraggableRow
+                id={id}
                 onDoubleClick={onDoubleClick}
-                sx={{ height: rowHeight }}
-              >
-                <ListItemText primary={id} />
-              </ListItemButton>
+                rowHeight={rowHeight}
+              />
             </div>
           )
         })}

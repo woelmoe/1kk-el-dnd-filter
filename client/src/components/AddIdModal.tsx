@@ -12,7 +12,7 @@ import {
   Alert
 } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
-import { addToLeft } from '../api'
+import { addToLeft } from '../api/api'
 
 interface IProps {
   open: boolean

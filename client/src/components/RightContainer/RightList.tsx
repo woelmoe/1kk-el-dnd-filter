@@ -1,21 +1,8 @@
 import { Box, CircularProgress } from '@mui/material'
 import type { Virtualizer } from '@tanstack/react-virtual'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent
-} from '@dnd-kit/core'
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove
-} from '@dnd-kit/sortable'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { updateRightOrder, type IPage } from '../../api'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { ContainerType, type IDropData } from '../../composable/types'
 import { SortableRow } from './SortableRow'
 
 interface IProps {
@@ -23,7 +10,7 @@ interface IProps {
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
-  queryKey: [string, string]
+  rowHeight: number
 }
 
 export function RightList({
@@ -31,44 +18,12 @@ export function RightList({
   virtualizer,
   items,
   isFetchingNextPage,
-  queryKey
+  rowHeight
 }: IProps) {
-  const queryClient = useQueryClient()
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  )
-
-  const orderMutation = useMutation({
-    mutationFn: (order: number[]) => updateRightOrder(order),
-    onError: () => {
-      queryClient.invalidateQueries({ queryKey: ['right'] })
-    }
+  const { setNodeRef: setDroppableRef } = useDroppable({
+    id: 'right-list',
+    data: { container: ContainerType.Right } satisfies IDropData
   })
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    if (!over || active.id === over.id) return
-
-    const oldIndex = items.indexOf(Number(active.id))
-    const newIndex = items.indexOf(Number(over.id))
-    if (oldIndex === -1 || newIndex === -1) return
-
-    const newOrder = arrayMove(items, oldIndex, newIndex)
-
-    queryClient.setQueryData(queryKey, (data: any) => {
-      if (!data) return data
-      return {
-        ...data,
-        pages: data.pages.map((page: IPage, i: number) => ({
-          ...page,
-          items: i === 0 ? newOrder : page.items
-        }))
-      }
-    })
-
-    orderMutation.mutate(newOrder)
-  }
 
   return (
     <Box
@@ -79,39 +34,35 @@ export function RightList({
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 1,
+        overflowX: 'hidden',
         minHeight: 0
       }}
     >
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis]}
-      >
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          <div
-            style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
-          >
-            {virtualizer.getVirtualItems().map((vi) => {
-              const id = items[vi.index]
-              return (
-                <div
-                  key={id}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${vi.start}px)`
-                  }}
-                >
-                  <SortableRow id={id} />
-                </div>
-              )
-            })}
-          </div>
-        </SortableContext>
-      </DndContext>
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        <div
+          ref={setDroppableRef}
+          style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
+        >
+          {virtualizer.getVirtualItems().map((vi) => {
+            const id = items[vi.index]
+            return (
+              <div
+                key={id}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: rowHeight,
+                  transform: `translateY(${vi.start}px)`
+                }}
+              >
+                <SortableRow id={id} rowHeight={rowHeight} />
+              </div>
+            )
+          })}
+        </div>
+      </SortableContext>
 
       {isFetchingNextPage && (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
