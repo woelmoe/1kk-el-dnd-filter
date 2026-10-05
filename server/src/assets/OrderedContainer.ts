@@ -57,9 +57,15 @@ export class OrderedContainer {
       return
     }
 
+    const oldValues: number[] = []
+    for (const [index] of patches) {
+      oldValues.push(this.order[index])
+    }
+    for (const value of oldValues) {
+      this.positionById.delete(value)
+    }
+
     for (const [index, value] of patches) {
-      const oldValue = this.order[index]
-      this.positionById.delete(oldValue)
       this.order[index] = value
       this.positionById.set(value, index)
     }

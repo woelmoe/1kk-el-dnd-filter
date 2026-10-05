@@ -13,11 +13,11 @@ export interface IMoveResult extends IContainerState {
   moved: boolean
 }
 
-export interface ValidationError {
+export interface IValidationError {
   error: string
 }
 
-export function parseId(raw: string): number | ValidationError {
+export function parseId(raw: string): number | IValidationError {
   const id = Number(raw)
   if (!isValidId(id)) {
     return { error: 'invalid id' }
@@ -25,7 +25,7 @@ export function parseId(raw: string): number | ValidationError {
   return id
 }
 
-export function isValidationError(value: unknown): value is ValidationError {
+export function isValidationError(value: unknown): value is IValidationError {
   return typeof value === 'object' && value !== null && 'error' in value
 }
 
@@ -56,11 +56,8 @@ export function moveToRight(id: number): IMoveResult {
 }
 
 export function moveToLeft(id: number): IMoveResult {
-  const result = tryAddToLeft(id)
-  return {
-    moved: result.added,
-    ...getContainerState()
-  }
+  const moved = moveService.removeFromRight(id)
+  return { moved, ...getContainerState() }
 }
 
 export function getDebugState(): IContainerState {

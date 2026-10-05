@@ -26,12 +26,30 @@ export const moveService = {
     return true
   },
 
+  removeFromRight(id: number): boolean {
+    if (!rightContainer.has(id)) return false
+
+    rightContainer.remove(id)
+    leftContainer.push(id)
+    return true
+  },
+
   setRightOrder(visibleOrder: number[]) {
+    console.log('setRightOrder', {
+      visibleOrder,
+      current: rightContainer.getOrder()
+    })
+
     const positions: number[] = []
     for (const id of visibleOrder) {
       const pos = rightContainer.findPosition(id)
+      console.log('findPosition', id, pos)
       if (pos !== undefined) positions.push(pos)
     }
+
+    console.log('positions before sort', positions)
+    positions.sort((a, b) => a - b)
+    console.log('positions after sort', positions)
 
     if (positions.length !== visibleOrder.length) {
       console.log('setRightOrder: length mismatch', {
@@ -41,13 +59,13 @@ export const moveService = {
       return
     }
 
-    positions.sort((a, b) => a - b)
-
     const patches = new Map<number, number>()
     for (let i = 0; i < positions.length; i++) {
       patches.set(positions[i], visibleOrder[i])
     }
 
+    console.log('patches', [...patches.entries()])
     rightContainer.applyPatches(patches)
+    console.log('after apply', rightContainer.getOrder())
   }
 }
