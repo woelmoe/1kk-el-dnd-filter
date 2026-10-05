@@ -1,9 +1,9 @@
 import { Paper, Stack, TextField, Typography } from '@mui/material'
-import { useFilters } from '../../store/filter'
 import { useDebouncedValue } from '../../composable/useDebouncedValue'
 import { useVirtualList } from '../../composable/useVirtualList'
 import { getRight } from '../../api'
 import { RightList } from './RightList'
+import { useFilters } from '../../store/filter'
 
 export function RightContainer() {
   const { rightFilter, setRightFilter } = useFilters()
@@ -30,8 +30,7 @@ export function RightContainer() {
         flexDirection: 'column',
         minHeight: 0,
         border: '1px solid',
-        borderColor: 'divider',
-        position: 'relative'
+        borderColor: 'divider'
       }}
     >
       <Typography variant='h6' sx={{ mb: 1 }}>
@@ -54,6 +53,7 @@ export function RightContainer() {
         virtualizer={list.virtualizer}
         items={list.items}
         isFetchingNextPage={list.isFetchingNextPage}
+        queryKey={['right', debouncedFilter]}
       />
     </Paper>
   )
