@@ -2,16 +2,16 @@
   "name": "fullstack-test-server",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "module": "commonjs",
+  "moduleResolution": "node",
   "description": "Backend for the 1M items selector test task",
-  "main": "dist/index.js",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "tsup src/index.ts --format esm --out-dir dist --clean",
+    "start": "node dist/index.mjs",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist"
   },
@@ -26,6 +26,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
     "rimraf": "^5.0.7",
+    "tsup": "^8.5.1",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
   }
