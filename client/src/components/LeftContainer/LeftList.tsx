@@ -11,6 +11,7 @@ interface IProps {
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
+  rowHeight: number
   onDoubleClick: () => void
 }
 
@@ -19,6 +20,7 @@ export function LeftList({
   virtualizer,
   items,
   isFetchingNextPage,
+  rowHeight,
   onDoubleClick
 }: IProps) {
   return (
@@ -43,11 +45,16 @@ export function LeftList({
                 position: 'absolute',
                 top: 0,
                 left: 0,
+                height: rowHeight,
                 width: '100%',
                 transform: `translateY(${vi.start}px)`
               }}
             >
-              <ListItemButton disableRipple onDoubleClick={onDoubleClick}>
+              <ListItemButton
+                disableRipple
+                onDoubleClick={onDoubleClick}
+                sx={{ height: rowHeight }}
+              >
                 <ListItemText primary={id} />
               </ListItemButton>
             </div>

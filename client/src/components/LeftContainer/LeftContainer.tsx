@@ -60,6 +60,7 @@ export function LeftContainer() {
         items={list.items}
         isFetchingNextPage={list.isFetchingNextPage}
         onDoubleClick={() => setAddModalOpen(true)}
+        rowHeight={list.rowHeight}
       />
 
       <AddFab onClick={() => setAddModalOpen(true)} />
