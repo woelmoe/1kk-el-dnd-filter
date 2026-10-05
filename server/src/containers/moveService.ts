@@ -27,21 +27,25 @@ export const moveService = {
   },
 
   setRightOrder(visibleOrder: number[]) {
-    const patches = new Map<number, number>()
-
+    const positions: number[] = []
     for (const id of visibleOrder) {
       const pos = rightContainer.findPosition(id)
-      if (pos !== undefined) {
-        patches.set(pos, id)
-      }
+      if (pos !== undefined) positions.push(pos)
     }
 
-    if (patches.size !== visibleOrder.length) {
-      console.log('setRightOrder: length mismatch!', {
-        expected: patches.size,
+    if (positions.length !== visibleOrder.length) {
+      console.log('setRightOrder: length mismatch', {
+        expected: positions.length,
         got: visibleOrder.length
       })
       return
+    }
+
+    positions.sort((a, b) => a - b)
+
+    const patches = new Map<number, number>()
+    for (let i = 0; i < positions.length; i++) {
+      patches.set(positions[i], visibleOrder[i])
     }
 
     rightContainer.applyPatches(patches)

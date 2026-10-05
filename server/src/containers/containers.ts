@@ -1,6 +1,5 @@
-import { StoreContainer } from '../assets/StoreContainer'
+import { OrderedContainer } from '@src/assets/OrderedContainer'
 
-export const leftContainer = new StoreContainer()
-leftContainer.init(1_000_000)
+export const leftContainer = new OrderedContainer(1_000_000)
 
-export const rightContainer = new StoreContainer()
+export const rightContainer = new OrderedContainer()

@@ -1,14 +1,44 @@
+import type { OrderedContainer } from '@src/assets/OrderedContainer'
 import { leftContainer, rightContainer } from '@src/containers/containers'
-import { filterIds } from '@src/utils/filter'
 import { paginate, type IPage } from '@src/utils/pagination'
+
+function getPage(
+  container: OrderedContainer,
+  filter: number[],
+  cursor: number,
+  limit: number
+): IPage {
+  if (filter.length === 0) {
+    return paginate(container.getOrder(), cursor, limit)
+  }
+
+  const positions: number[] = []
+  for (const id of filter) {
+    const pos = container.findPosition(id)
+    if (pos !== undefined) {
+      positions.push(pos)
+    }
+  }
+
+  positions.sort((a, b) => a - b)
+
+  const source = container.getOrder()
+  const page = positions.slice(cursor, cursor + limit)
+  const items = page.map((pos) => source[pos])
+
+  return {
+    items,
+    nextCursor: cursor + page.length,
+    hasMore: cursor + limit < positions.length
+  }
+}
 
 export function getLeft(
   filter: number[],
   cursor: number,
   limit: number
 ): IPage {
-  const filtered = filterIds(leftContainer.getArray(), filter)
-  return paginate(filtered, cursor, limit)
+  return getPage(leftContainer, filter, cursor, limit)
 }
 
 export function getRight(
@@ -16,6 +46,5 @@ export function getRight(
   cursor: number,
   limit: number
 ): IPage {
-  const filtered = filterIds(rightContainer.getArray(), filter)
-  return paginate(filtered, cursor, limit)
+  return getPage(rightContainer, filter, cursor, limit)
 }
