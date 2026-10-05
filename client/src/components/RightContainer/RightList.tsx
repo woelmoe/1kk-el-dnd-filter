@@ -41,7 +41,7 @@ export function RightList({
 
   const orderMutation = useMutation({
     mutationFn: (order: number[]) => updateRightOrder(order),
-    onSuccess: () => {
+    onError: () => {
       queryClient.invalidateQueries({ queryKey: ['right'] })
     }
   })

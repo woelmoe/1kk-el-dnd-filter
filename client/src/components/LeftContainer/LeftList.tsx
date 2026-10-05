@@ -11,7 +11,7 @@ interface IProps {
   virtualizer: Virtualizer<HTMLDivElement, Element>
   items: number[]
   isFetchingNextPage: boolean
-  onSelect: (id: number) => void
+  onDoubleClick: () => void
 }
 
 export function LeftList({
@@ -19,7 +19,7 @@ export function LeftList({
   virtualizer,
   items,
   isFetchingNextPage,
-  onSelect
+  onDoubleClick
 }: IProps) {
   return (
     <Box
@@ -47,7 +47,7 @@ export function LeftList({
                 transform: `translateY(${vi.start}px)`
               }}
             >
-              <ListItemButton disableRipple onDoubleClick={() => onSelect(id)}>
+              <ListItemButton disableRipple onDoubleClick={onDoubleClick}>
                 <ListItemText primary={id} />
               </ListItemButton>
             </div>

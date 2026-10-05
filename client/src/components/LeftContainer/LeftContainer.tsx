@@ -1,29 +1,29 @@
+import { useState } from 'react'
 import { Paper, Stack, TextField, Typography } from '@mui/material'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { LeftList } from './LeftList'
 import { useFilters } from '../../store/filter'
 import { useDebouncedValue } from '../../composable/useDebouncedValue'
 import { useVirtualList } from '../../composable/useVirtualList'
-import { addToRight, getLeft } from '../../api'
+import { getLeft } from '../../api'
+import { LeftList } from './LeftList'
+import { AddIdModal } from '../AddIdModal'
 import { AddFab } from '../AddFab'
 
 export function LeftContainer() {
   const { leftFilter, setLeftFilter } = useFilters()
   const debouncedFilter = useDebouncedValue(leftFilter, 300)
-  const queryClient = useQueryClient()
+
+  const [addModalOpen, setAddModalOpen] = useState(false)
 
   const list = useVirtualList({
     queryKey: ['left', debouncedFilter],
     getPage: (cursor) => getLeft(debouncedFilter, cursor)
   })
 
-  const addMutation = useMutation({
-    mutationFn: (id: number) => addToRight(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['left'] })
-      queryClient.invalidateQueries({ queryKey: ['right'] })
+  const handleFilterChange = (raw: string) => {
+    if (/^[0-9\s]*$/.test(raw)) {
+      setLeftFilter(raw)
     }
-  })
+  }
 
   return (
     <Paper
@@ -36,11 +36,11 @@ export function LeftContainer() {
         minHeight: 0,
         border: '1px solid',
         borderColor: 'divider',
-        position: 'relative' // ← для FAB
+        position: 'relative'
       }}
     >
       <Typography variant='h6' sx={{ mb: 1 }}>
-        Все элементы
+        Все элементы, кроме выбранных
       </Typography>
 
       <Stack direction='row' spacing={1} sx={{ mb: 1.5 }}>
@@ -50,12 +50,7 @@ export function LeftContainer() {
           label='Фильтр по ID'
           placeholder='Формат: 1 3 43 100 ...'
           value={leftFilter}
-          onChange={(e) => {
-            const value = e.target.value
-            if (/^[0-9\s]*$/.test(value)) {
-              setLeftFilter(value)
-            }
-          }}
+          onChange={(e) => handleFilterChange(e.target.value)}
         />
       </Stack>
 
@@ -64,10 +59,11 @@ export function LeftContainer() {
         virtualizer={list.virtualizer}
         items={list.items}
         isFetchingNextPage={list.isFetchingNextPage}
-        onSelect={(id) => addMutation.mutate(id)}
+        onDoubleClick={() => setAddModalOpen(true)}
       />
 
-      <AddFab />
+      <AddFab onClick={() => setAddModalOpen(true)} />
+      <AddIdModal open={addModalOpen} onClose={() => setAddModalOpen(false)} />
     </Paper>
   )
 }

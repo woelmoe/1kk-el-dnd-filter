@@ -1,9 +1,12 @@
 import { Container } from '@mui/material'
+import { LeftContainer } from './components/LeftContainer/LeftContainer'
 import { RightContainer } from './components/RightContainer/RightContainer'
 import { OnBoarding } from './components/OnBoarding/OnBoarding'
-import { LeftContainer } from './components/LeftContainer/LeftContainer'
+import { useSelectedLive } from './composable/useSelectedLive'
 
 export default function App() {
+  useSelectedLive()
+
   return (
     <Container
       maxWidth={false}

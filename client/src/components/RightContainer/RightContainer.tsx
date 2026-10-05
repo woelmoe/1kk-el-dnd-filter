@@ -34,7 +34,7 @@ export function RightContainer() {
       }}
     >
       <Typography variant='h6' sx={{ mb: 1 }}>
-        Выбранные
+        Выбранные элементы
       </Typography>
 
       <Stack direction='row' spacing={1} sx={{ mb: 1.5 }}>
