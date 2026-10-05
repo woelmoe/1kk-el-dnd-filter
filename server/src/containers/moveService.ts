@@ -17,11 +17,20 @@ export const moveService = {
     return { added: true, position: leftContainer.count() }
   },
 
-  addToRight(id: number): boolean {
+  addToRight(id: number, beforeId?: number): boolean {
     if (rightContainer.has(id)) return false
     if (!leftContainer.has(id)) return false
 
     leftContainer.remove(id)
+
+    if (beforeId !== undefined) {
+      const pos = rightContainer.findPosition(beforeId)
+      if (pos !== undefined) {
+        rightContainer.insertAt(id, pos)
+        return true
+      }
+    }
+
     rightContainer.push(id)
     return true
   },

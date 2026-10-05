@@ -3,25 +3,27 @@ import { moveService } from '@src/containers/moveService'
 import { leftContainer, rightContainer } from '@src/containers/containers'
 import { broadcast } from '@src/events'
 
-const addQueue = new BatchQueue<{ id: number }>({
+const addQueue = new BatchQueue<{ id: number; beforeId?: number }>({
   name: 'add',
   intervalMs: 1_000,
   maxSize: 5_000,
   flushHandler: (batch) => {
     const added: number[] = []
-
-    for (const { id } of batch) {
-      if (moveService.addToRight(id)) {
-        added.push(id)
-      }
+    for (const { id, beforeId } of batch) {
+      if (moveService.addToRight(id, beforeId)) added.push(id)
     }
-
-    if (added.length > 0) {
-      broadcast('selected:changed', { added })
-    }
+    if (added.length > 0) broadcast('selected:changed', { added })
   },
   deduplicationKey: (p) => String(p.id)
 })
+
+export function queueAddToRight(id: number, beforeId?: number): boolean {
+  if (rightContainer.has(id)) return false
+  if (!leftContainer.has(id)) return false
+
+  addQueue.enqueue({ id, beforeId })
+  return true
+}
 
 const removeQueue = new BatchQueue<{ id: number }>({
   name: 'remove',
@@ -48,7 +50,6 @@ const orderQueue = new BatchQueue<{ order: number[] }>({
   intervalMs: 1_000,
   maxSize: 5_000,
   flushHandler: (batch) => {
-    console.log('orderQueue flush', batch)
     const last = batch[batch.length - 1]
     moveService.setRightOrder(last.order)
     broadcast('order:changed', {
@@ -57,14 +58,6 @@ const orderQueue = new BatchQueue<{ order: number[] }>({
   },
   deduplicationKey: () => 'order'
 })
-
-export function queueAddToRight(id: number): boolean {
-  if (rightContainer.has(id)) return false
-  if (!leftContainer.has(id)) return false
-
-  addQueue.enqueue({ id })
-  return true
-}
 
 export function queueRemoveFromRight(id: number): boolean {
   if (!rightContainer.has(id)) return false
