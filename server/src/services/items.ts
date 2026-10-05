@@ -12,15 +12,15 @@ function getPage(
     return paginate(container.getOrder(), cursor, limit)
   }
 
-  const positions: number[] = []
+  const positionsSet = new Set<number>()
   for (const id of filter) {
     const pos = container.findPosition(id)
     if (pos !== undefined) {
-      positions.push(pos)
+      positionsSet.add(pos)
     }
   }
 
-  positions.sort((a, b) => a - b)
+  const positions = [...positionsSet].sort((a, b) => a - b)
 
   const source = container.getOrder()
   const page = positions.slice(cursor, cursor + limit)
