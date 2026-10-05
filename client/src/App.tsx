@@ -1,67 +1,26 @@
-import { useState } from 'react'
 import { Container } from '@mui/material'
-import {
-  DndContext,
-  DragOverlay,
-  type DragStartEvent,
-  type DragEndEvent
-} from '@dnd-kit/core'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { LeftContainer } from './components/LeftContainer/LeftContainer'
 import { RightContainer } from './components/RightContainer/RightContainer'
 import { OnBoarding } from './components/OnBoarding/OnBoarding'
 import { useSelectedLive } from './composable/useSelectedLive'
-import { useCrossContainerDnd } from './composable/useDnd'
-import { useFilters } from './store/filter'
-import { useDebouncedValue } from './composable/useDebouncedValue'
-import { getRight } from './api/api'
-import { QueryKeys } from './api/types'
+import { useRightQuery } from './composable/useRightQuery'
+import { useDndSetup } from './composable/useDnd/useDndSetup'
 
 export default function App() {
   useSelectedLive()
 
-  const { rightFilter } = useFilters()
-  const debouncedRightFilter = useDebouncedValue(rightFilter, 300)
-  const rightQueryKey: [string, string] = [
-    QueryKeys.Right,
-    debouncedRightFilter
-  ]
+  const { items: rightItems, queryKey: rightQueryKey } = useRightQuery()
 
-  const rightQuery = useInfiniteQuery({
-    queryKey: rightQueryKey,
-    queryFn: ({ pageParam }) => getRight(debouncedRightFilter, pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (last) => (last.hasMore ? last.nextCursor : undefined)
-  })
-
-  const rightItems = rightQuery.data?.pages.flatMap((page) => page.items) ?? []
-
-  const { sensors, handleDragEnd } = useCrossContainerDnd({
-    rightItems,
-    rightQueryKey
-  })
-
-  const [activeId, setActiveId] = useState<number | null>(null)
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(Number(event.active.id))
-  }
-
-  const handleDragEndInternal = (event: DragEndEvent) => {
-    handleDragEnd(event)
-    setActiveId(null)
-  }
-
-  const handleDragCancel = () => {
-    setActiveId(null)
-  }
+  const { sensors, activeId, onDragStart, onDragEnd, onDragCancel } =
+    useDndSetup({ rightItems, rightQueryKey })
 
   return (
     <DndContext
       sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEndInternal}
-      onDragCancel={handleDragCancel}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragCancel={onDragCancel}
       autoScroll={false}
     >
       <Container

@@ -5,9 +5,9 @@ import {
   type DragEndEvent
 } from '@dnd-kit/core'
 import { useQueryClient } from '@tanstack/react-query'
-import { addToRight, removeFromRight, updateRightOrder } from '../api/api'
-import { ContainerType, type IDragData, type IDropData } from './types'
-import { QueryKeys } from '../api/types'
+import { addToRight, removeFromRight, updateRightOrder } from '../../api/api'
+import { ContainerType, type IDragData, type IDropData } from '../types'
+import { QueryKeys } from '../../api/types'
 
 interface IOptions {
   rightItems: number[]
