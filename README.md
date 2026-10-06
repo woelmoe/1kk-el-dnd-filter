@@ -37,7 +37,6 @@
 cd server
 npm install
 npm run dev
-http://localhost:4000
 ```
 
 ### Frontend
@@ -57,7 +56,6 @@ VITE_API_URL=http://127.0.0.1:4000
 
 ```bash
 npm run dev
-http://localhost:5173/
 ```
 
 Открыть `http://localhost:5173`.
@@ -105,7 +103,7 @@ SSE-канал. События:
 **`GET /health`**
 Health-check.
 
-## Принятые решения по ТЗ
+## Принятые решения по мере выполнения
 
 ### 1. Кнопка «+» добавляет ID в левый контейнер
 
@@ -119,9 +117,8 @@ Health-check.
 
 Односторонняя шина событий сервер-фронт
 
-#### 5. UX-улучшения сверх ТЗ
-
-- **OnBoarding** при первом запуске — подсветка FAB и левой панели.
+#### 5. Подсказка при первом запуске
+**OnBoarding** подсветка FAB и левой панели.
 
 ## Архитектура
 
@@ -131,14 +128,12 @@ Health-check.
 
 ### Ключевые паттерны
 
-- **`OrderedContainer`** — единая структура: `Set` для O(1) `has`,
-  `Array` для порядка, ленивый `Map` для позиций.
-- **`Батчинг`** — flush по таймеру или `maxSize`.
+- **`OrderedContainer`** — единая структура: `Set`, массив `order` для порядка.
+- **`Батчинг`** — flush по таймеру / размеру очереди.
 - **`Дедупликация`** — `Map` для дедупликации.
 - **`Оптимистичные обновления`** — не ждем событий от SSE, обновляем на фронте сразу элементы после дропа.
 
 ## Ссылки
 
-- **Live demo:** https://1kk-el-test-front.vercel.app
+- **Live demo:** https://1kk-el-dnd-filter.vercel.app/
 - **Backend API:** https://onekk-el-dnd-filter.onrender.com/
-- **Исходники:** https://github.com/woelmoe/1kk-el-dnd-filter
