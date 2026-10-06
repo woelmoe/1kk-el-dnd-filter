@@ -6,9 +6,11 @@
 
 ## Демонстрация
 
-![Онбординг](docs/Onboarding.JPG)
+![Онбординг](docs/Onboarding.jpg)
 ![Drag & Drop](docs/dragndrop.jpg)
-![Контейнеры](docs/ElementContainers.JPG)
+![Контейнеры](docs/ElementContainers.jpg)
+![Добавление элемента](docs/addnew.jpg)
+![Уведомление](docs/addnotification.jpg)
 
 ## Стек
 
