@@ -172,59 +172,23 @@ Infinite scroll через `IntersectionObserver` + автоподгрузка �
 
 - **Двойной клик** по элементу в левом — открывает модалку добавления ID.
 - **OnBoarding** при первом запуске — подсветка FAB и левой панели.
-- **DragOverlay** — визуальный клон, следующий за курсором.
-- **Оптимистичное обновление** кэшей react-query при DnD.
-- **Placeholder** при drop — показывает куда встанет элемент.
 
 ## Архитектура
 
 ### Backend
 
-**Слои:** контроллеры — тонкие (только HTTP), сервисы — бизнес-логика,
-контейнеры — данные.
+Разделение логики сервера на контроллеры и сервисы
 
 ### Ключевые паттерны
 
 - **`OrderedContainer`** — единая структура: `Set` для O(1) `has`,
   `Array` для порядка, ленивый `Map` для позиций.
-- **`BatchQueue`** — `Map` для дедупликации, flush по таймеру или `maxSize`,
-  логирование потерь при ошибке handler.
-- **DnD** — единый `DndContext` в `App`, `pointerWithin` для корректного
-  drop на виртуализированных списках, `DragOverlay` для клона.
-- **Optimistic updates** — `queryClient.setQueriesData` перед PATCH, invalidate
-  при ошибке.
-
-## Deployment
-
-### Backend — Render
-
-- New Web Service → root `server/`.
-- Build: `npm install && npm run build`.
-- Start: `npm start`.
-- Environment: `PORT` — Render подставит автоматически.
-- Node version: 20+ (в `package.json` — `engines.node: ">=20"`).
-
-### Frontend — Vercel
-
-- New Project → root `client/`.
-- Build: `npm run build`, Output: `dist`.
-- Environment Variables:
-  - `VITE_API_URL` = `https://1kk-el-test-backend.onrender.com`.
+- **`Батчинг`** — flush по таймеру или `maxSize`.
+- **`Дедупликация`** — `Map` для дедупликации.
+- **`Оптимистичные обновления`** — не ждем событий от SSE, обновляем на фронте сразу элементы после дропа.
 
 ## Ссылки
 
 - **Live demo:** https://1kk-el-test-front.vercel.app
-- **Backend API:** https://1kk-el-test-backend.onrender.com
+- **Backend API:** https://onekk-el-dnd-filter.onrender.com/
 - **Исходники:** https://github.com/woelmoe/1kk-el-dnd-filter
-
-## Известные упрощения
-
-Сделано осознанно, по ТЗ или как компромисс:
-
-- **In-memory state** — БД не требуется ТЗ. При перезапуске сервера
-  состояние сбрасывается.
-- **Без retry при ошибке мутации** — только `invalidateQueries` для отката.
-- **Debug-ручки** (`/api/debug/*`) оставлены для ручной проверки.
-  В проде не критичны, но не мешают.
-- **Нет heartbeat для SSE** — прокси Render/Vercel держат соединение
-  дольше 60 секунд, дополнительный keep-alive не нужен.
