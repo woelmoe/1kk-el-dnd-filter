@@ -16,19 +16,18 @@
 
 **Backend**
 
-- Node.js 20+
-- Express 4
-- TypeScript 5 (ESM, `erasableSyntaxOnly`)
-- In-memory хранилище (без БД — по ТЗ)
+- Node.js
+- Express
+- TypeScript
 
 **Frontend**
 
-- Vite 8 + React 18 + TypeScript
-- Material-UI v5
-- TanStack Query v5 — кэш, invalidate, infinite scroll
-- TanStack Virtual — виртуализация
-- dnd-kit — drag-and-drop
-- Zustand — локальные фильтры
+- Vite + React + TypeScript
+- Material-UI
+- TanStack Query - кэш, invalidate, infinite scroll
+- TanStack Virtual - виртуализация
+- dnd-kit - drag-and-drop
+- Zustand - стор для фильтров
 
 ## Запуск локально
 
@@ -38,7 +37,7 @@
 cd server
 npm install
 npm run dev
-# Server listening on http://localhost:4000
+http://localhost:4000
 ```
 
 ### Frontend
@@ -58,8 +57,7 @@ VITE_API_URL=http://127.0.0.1:4000
 
 ```bash
 npm run dev
-# VITE v8.x  ready in ... ms
-# ➜  Local:   http://localhost:5173/
+http://localhost:5173/
 ```
 
 Открыть `http://localhost:5173`.
