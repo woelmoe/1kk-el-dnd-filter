@@ -23,10 +23,10 @@ export function useVirtualList({
     getNextPageParam: (last) => (last.hasMore ? last.nextCursor : undefined)
   })
 
-  const items = useMemo(
-    () => query.data?.pages.flatMap((page) => page.items) ?? [],
-    [query.data]
-  )
+  const items = useMemo(() => {
+    const flat = query.data?.pages.flatMap((page) => page.items) ?? []
+    return Array.from(new Set(flat))
+  }, [query.data])
 
   const parentRef = useRef<HTMLDivElement>(null)
   const sensorRef = useRef<HTMLDivElement>(null)
