@@ -43,10 +43,22 @@ function insertToCache(
 ) {
   queryClient.setQueriesData({ queryKey: [key] }, (data: any) => {
     if (!data?.pages) return data
+
+    let targetPageIndex = 0
+    if (beforeId !== undefined) {
+      for (let i = 0; i < data.pages.length; i++) {
+        if (data.pages[i].items.includes(beforeId)) {
+          targetPageIndex = i
+          break
+        }
+      }
+    }
+
     return {
       ...data,
       pages: data.pages.map((page: IPage, i: number) => {
-        if (i !== 0) return page
+        if (i !== targetPageIndex) return page
+
         const arr = [...page.items]
 
         if (beforeId !== undefined) {
@@ -60,7 +72,7 @@ function insertToCache(
         arr.push(id)
         return {
           ...page,
-          items: sorted ? arr.sort((a, b) => a - b) : arr
+          items: sorted ? [...arr].sort((a, b) => a - b) : arr
         }
       })
     }
